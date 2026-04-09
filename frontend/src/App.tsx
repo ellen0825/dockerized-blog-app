@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-
+import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { useAuth } from './AuthContext';
 
@@ -39,6 +39,7 @@ export const App: React.FC = () => {
           <nav className="nav">
             {user ? (
               <>
+                
                 <button
                   type="button"
                   className="nav-logout-button"
@@ -50,6 +51,7 @@ export const App: React.FC = () => {
               </>
             ) : (
               <>
+                <Link to="/login">Login</Link>
                 <Link to="/register">Register</Link>
               </>
             )}
@@ -61,7 +63,8 @@ export const App: React.FC = () => {
         <div className="container">
           <Routes>
             <Route path="/" element={<HomeRedirect />} />
-           
+        
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </div>
