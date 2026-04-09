@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./backend:/var/www/html
+      - vendor:/var/www/html/vendor
     env_file:
       - ./backend/.env.docker
     depends_on:
@@ -39,4 +40,5 @@ services:
 
 volumes:
   db-data:
+  vendor:
 
