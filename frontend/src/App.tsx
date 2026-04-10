@@ -10,11 +10,7 @@ import { useAuth } from './AuthContext';
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
-
-  if (!user) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
   return children;
 };
 
@@ -35,28 +31,28 @@ export const App: React.FC = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <div className="container app-header-content">
+        <div className="app-header-content">
           <h1 className="logo">
-            <Link to="/">Simple Blog</Link>
+            <Link to="/">The Blog</Link>
           </h1>
           <nav className="nav">
             {user ? (
               <>
                 <Link to="/articles">Articles</Link>
-                <Link to="/new">New Article</Link>
+                <Link to="/new" className="nav-cta">Write</Link>
                 <button
                   type="button"
                   className="nav-logout-button"
                   onClick={handleLogout}
                   disabled={loggingOut}
                 >
-                  {loggingOut ? 'Logging out…' : 'Logout'}
+                  {loggingOut ? 'Signing out…' : 'Sign out'}
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login">Login</Link>
-                <Link to="/register">Register</Link>
+                <Link to="/login">Sign in</Link>
+                <Link to="/register" className="nav-cta">Get started</Link>
               </>
             )}
           </nav>
@@ -67,30 +63,9 @@ export const App: React.FC = () => {
         <div className="container">
           <Routes>
             <Route path="/" element={<HomeRedirect />} />
-            <Route
-              path="/articles"
-              element={
-                <ProtectedRoute>
-                  <ArticleListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/articles/:id"
-              element={
-                <ProtectedRoute>
-                  <ArticleDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/new"
-              element={
-                <ProtectedRoute>
-                  <NewArticlePage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/articles" element={<ProtectedRoute><ArticleListPage /></ProtectedRoute>} />
+            <Route path="/articles/:id" element={<ProtectedRoute><ArticleDetailPage /></ProtectedRoute>} />
+            <Route path="/new" element={<ProtectedRoute><NewArticlePage /></ProtectedRoute>} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>

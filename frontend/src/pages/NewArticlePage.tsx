@@ -11,30 +11,28 @@ export const NewArticlePage: React.FC = () => {
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!title.trim() || !content.trim()) return;
-
     try {
       setSubmitting(true);
-      const article: Article = await createArticle({
-        title: title.trim(),
-        content: content.trim(),
-      });
-      toast.success('Article published!');
+      const article: Article = await createArticle({ title: title.trim(), content: content.trim() });
+      toast.success('Article published.');
       navigate(`/articles/${article.id}`);
-    } catch (e) {
-      toast.error("Couldn't publish article. Please try again.");
+    } catch {
+      toast.error("Couldn't publish. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
+  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
+
   return (
-    <section className="page">
+    <section className="page new-article-page">
       <div className="page-header">
-        <h2>New Article</h2>
-        <p className="page-sub">Write and publish a new post.</p>
+        <h2>New article</h2>
+        <p className="page-sub">Write something worth reading.</p>
       </div>
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
@@ -44,26 +42,27 @@ export const NewArticlePage: React.FC = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Article title"
+            placeholder="Your article title…"
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="content">Content</label>
+          <label htmlFor="content">
+            Content{wordCount > 0 && <span style={{ color: 'var(--text-3)', fontWeight: 400, marginLeft: '0.5rem' }}>· {wordCount} words</span>}
+          </label>
           <textarea
             id="content"
-            rows={8}
+            rows={14}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Write your article content here…"
+            placeholder="Start writing…"
             required
           />
         </div>
         <button type="submit" className="button" disabled={submitting}>
-          {submitting ? 'Saving…' : 'Publish Article'}
+          {submitting ? 'Publishing…' : 'Publish article'}
         </button>
       </form>
     </section>
   );
 };
-

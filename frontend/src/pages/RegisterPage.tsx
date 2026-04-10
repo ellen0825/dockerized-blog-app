@@ -15,34 +15,25 @@ export const RegisterPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      setError('Please enter your email address.');
-      toast.error('Please enter your email address.');
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      setError('Please enter a valid email address.');
-      toast.error('Please enter a valid email address.');
-      return;
-    }
 
-    if (!name.trim() || !password || !passwordConfirmation) {
+    if (!name.trim() || !trimmedEmail || !password || !passwordConfirmation) {
       setError('Please fill in all fields.');
       toast.error('Please fill in all fields.');
       return;
     }
-
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      toast.error('Please enter a valid email address.');
+      return;
+    }
     if (password.length < 8) {
       setError('Password must be at least 8 characters.');
       toast.error('Password must be at least 8 characters.');
       return;
     }
-
     if (password !== passwordConfirmation) {
       setError('Passwords do not match.');
       toast.error('Passwords do not match.');
@@ -59,94 +50,74 @@ export const RegisterPage: React.FC = () => {
         password_confirmation: passwordConfirmation,
       });
       setUser(user, token);
-      toast.success('Account created! Welcome.');
+      toast.success('Account created. Welcome.');
       navigate('/articles');
-    } catch (e) {
-      setError('Registration failed. Please check your details and try again.');
-      toast.error('Registration failed. Please check your details and try again.');
+    } catch {
+      setError('Registration failed. Please check your details.');
+      toast.error('Registration failed. Please check your details.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <section className="auth-page">
-      <div className="auth-page-glow" />
-      <div className="auth-card">
-        <div className="auth-card-header">
-          <div className="auth-avatar-circle">
-            <span className="auth-avatar-icon">✦</span>
-          </div>
-          <h2 className="auth-title">Create your account</h2>
-          <p className="auth-subtitle">Join the blog community and start sharing your stories.</p>
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="auth-field">
-            <input
-              id="name"
-              className="auth-input"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Full name"
-              required
-            />
+    <div className="auth-page">
+      <div className="auth-panel">
+        <div className="auth-card">
+          <div className="auth-card-header">
+            <p className="auth-eyebrow">Get started</p>
+            <h2 className="auth-title">Create your account</h2>
+            <p className="auth-subtitle">Join and start publishing your ideas.</p>
           </div>
 
-          <div className="auth-field">
-            <input
-              id="email"
-              className="auth-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
-              required
-              autoComplete="email"
-            />
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="name">Full name</label>
+              <input id="name" className="auth-input" type="text" value={name}
+                onChange={(e) => setName(e.target.value)} placeholder="Jane Smith"
+                required autoComplete="name" />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="email">Email</label>
+              <input id="email" className="auth-input" type="email" value={email}
+                onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
+                required autoComplete="email" />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="password">Password</label>
+              <input id="password" className="auth-input" type="password" value={password}
+                onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters"
+                required minLength={8} autoComplete="new-password" />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="passwordConfirmation">Confirm password</label>
+              <input id="passwordConfirmation" className="auth-input" type="password" value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)} placeholder="Repeat password"
+                required autoComplete="new-password" />
+            </div>
+            {error && <p className="auth-error">{error}</p>}
+            <button type="submit" className="auth-button" disabled={submitting}>
+              {submitting ? 'Creating account�' : 'Create account'}
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <span>Already have an account?</span>
+            <Link to="/login" className="auth-footer-link">Sign in</Link>
           </div>
-
-          <div className="auth-field">
-            <input
-              id="password"
-              className="auth-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password (at least 8 characters)"
-              required
-              minLength={8}
-              autoComplete="new-password"
-            />
-          </div>
-
-          <div className="auth-field">
-            <input
-              id="passwordConfirmation"
-              className="auth-input"
-              type="password"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-              placeholder="Confirm password"
-              required
-            />
-          </div>
-
-          {error && <p className="auth-error">{error}</p>}
-
-          <button type="submit" className="auth-button" disabled={submitting}>
-            {submitting ? 'Creating account…' : 'Sign up'}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <span>Already have an account?</span>
-          <Link to="/login" className="auth-footer-link">
-            Sign in
-          </Link>
         </div>
       </div>
-    </section>
+
+      <aside className="auth-side">
+        <p className="auth-side-quote">
+          Write what should not be forgotten.
+        </p>
+        <div className="auth-side-dots">
+          <span className="auth-side-dot" />
+          <span className="auth-side-dot active" />
+          <span className="auth-side-dot" />
+        </div>
+      </aside>
+    </div>
   );
 };
